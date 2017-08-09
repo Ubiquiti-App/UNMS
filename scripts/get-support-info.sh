@@ -37,8 +37,11 @@ cp ~unms/data/update/* "${outdir}/"
 
 find ~unms/data/logs/* -type f -mtime -1 -exec cp {} "${outdir}/" \;
 
-tar -zcf "${outfile}" -C "${outdir}" .
-chown unms "${outfile}"
-rm -rf "${outdir}"
-
-echo Saved to "${outfile}"
+if [[ "$@" == "--debug" ]]; then
+  echo Saved to "${outdir}"
+else
+  tar -zcf "${outfile}" -C "${outdir}" .
+  chown unms "${outfile}"
+  rm -rf "${outdir}"
+  echo Saved to "${outfile}"
+fi
