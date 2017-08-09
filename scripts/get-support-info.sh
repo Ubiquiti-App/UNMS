@@ -1,6 +1,16 @@
 outdir=~unms/supportinfo
 outfile=~unms/supportinfo.tar.gz
 
+if [[ "$@" == "--restart" ]]; then
+    echo "Restarting UNMS..."
+    docker-compose -p unms -f ~unms/app/docker-compose.yml down
+    docker-compose -p unms -f ~unms/app/docker-compose.yml up -d
+    echo "Waiting for 30s..."
+    sleep 30
+fi
+
+echo "Gathering support info..."
+
 rm -rf "${outdir}"
 mkdir -p "${outdir}"
 
