@@ -8,8 +8,8 @@ mkdir -p "${outdir}"
 
 if [[ " $args" =~ " --restart" ]]; then
   echo "Restarting UNMS..."
-  docker-compose -p unms -f ~unms/app/docker-compose.yml down >"${outdir}/restart.txt"
-  docker-compose -p unms -f ~unms/app/docker-compose.yml up -d >>"${outdir}/restart.txt"
+  docker-compose -p unms -f ~unms/app/docker-compose.yml down 2>"${outdir}/restart.txt"
+  docker-compose -p unms -f ~unms/app/docker-compose.yml up -d 2>>"${outdir}/restart.txt"
   echo "Waiting for 30s..."
   sleep 30
 fi
