@@ -48,7 +48,9 @@ const parseLine = (line) => {
         if (updatedSite !== dbSite) {
           return DB.site.update(updatedSite)
             .then(() => console.log(`Updated site ${dbSiteName}`))
-            .catch(err => console.log(`Failed to update site ${siteName}: ${err}`));
+            .catch(err => console.log(`Failed to update site ${dbSiteName}: ${err}`));
+        } else {
+          console.log(`Will not update site ${dbSiteName}`);
         }
       })
       .catch(err => console.log(`Error : ${err}`));
