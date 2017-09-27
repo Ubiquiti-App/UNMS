@@ -1,9 +1,10 @@
 'use strict';
 
-const { assoc } = require('ramda');
+const { assocPath } = require('ramda');
 const { DB } = require('./lib/db');
 
-var content = '';
+let content = '';
+const promises = [];
 
 const parseLine = (line) => {
   try {
@@ -18,8 +19,8 @@ const parseLine = (line) => {
     const siteName = site.identification ? site.identification.name : site.id;
 
     if (!site.description || (!site.description.address && !site.description.note)) {
-      console.log(`No data for site ${siteName}`);
-      return;
+      console.log(`No address or note for site ${siteName} was found`);
+      return Promise.resolve();
     }
 
     return DB.site.findById(site.id)
@@ -28,8 +29,8 @@ const parseLine = (line) => {
         let updatedSite = dbSite;
         if (site.description.address) {
           if (!dbSite.description || !dbSite.description.address) {
-            updatedSite = assoc(['description', 'address'], site.description.address, dbSite);
-            console.log(`Update address of site ${dbSiteName}`);
+            updatedSite = assocPath(['description', 'address'], site.description.address, dbSite);
+            console.log(`Will update address of site ${dbSiteName} to ${site.description.address}`);
           } else {
             console.log(`Will not update address of site ${dbSiteName} - already set`);
           }
@@ -37,41 +38,47 @@ const parseLine = (line) => {
 
         if (site.description.note) {
           if (!dbSite.description || !dbSite.description.note) {
-            updatedSite = assoc(['description', 'note'], site.description.note, dbSite);
-            console.log(`Updated note of site ${dbSiteName}`);
+            updatedSite = assocPath(['description', 'note'], site.description.note, dbSite);
+            console.log(`Will update note of site ${dbSiteName} to ${site.description.note}`);
           } else {
             console.log(`Will not update note of site ${dbSiteName} - already set`);
           }
         }
 
         if (updatedSite !== dbSite) {
-          return Promise.resolve() // DB.site.update(updatedSite)
-            .then(`Updated site ${dbSiteName}`)
+          return DB.site.update(updatedSite)
+            .then(() => console.log(`Updated site ${dbSiteName}`))
             .catch(err => console.log(`Failed to update site ${siteName}: ${err}`));
         }
       })
-      .catch(err => console.log(err));
-
+      .catch(err => console.log(`Error : ${err}`));
 
   } catch(err) {
-    console.error(`Invalid line: ${line}`);
+    console.log(`Invalid line: ${line}`);
+    console.log(err);
   }
+
+  return Promise.resolve();
 };
 
 const onData = (data) => {
   content += data.toString();
   const lines = content.split('\n');
   for (let i=0; i<lines.length - 1; i++) {
-    parseLine(lines[i]);
+    promises.push(parseLine(lines[i]));
   }
   content=lines[lines.length - 1];
 };
 
 const onEnd = () => {
-  parseLine(content);
-  process.exit(0);
+  promises.push(parseLine(content));
+  Promise.all(promises).then(() => {
+    console.log('Script finished');
+    process.exit(0);
+  });
 };
 
+console.log('Script started');
 process.stdin.resume();
 process.stdin.setEncoding('utf-8');
 process.stdin.on('data', onData);
