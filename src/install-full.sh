@@ -28,7 +28,7 @@ PREREQUISITES=(
   "curl|curl"
   "sed|sed"
   "envsubst|gettext-base"
-  "nc|netcat"
+  "nc|ncat|netcat"
 )
 
 if [ "${SCRIPT_DIR}" = "${APP_DIR}" ]; then
@@ -643,7 +643,7 @@ build_docker_images() {
   cd "${SCRIPT_DIR}"
 
   if [ -f "${DOCKER_COMPOSE_FILENAME}" ]; then
-    if ! /usr/local/bin/docker-compose build; then
+    if ! docker-compose build; then
       echo "Failed to build docker images"
       exit 1
     fi
@@ -663,7 +663,7 @@ stop_docker_containers() {
 
 check_free_ports() {
   echo "Checking available ports"
-  while nc -z 127.0.0.1 "${HTTP_PORT}" >/dev/null 2>&1; do
+  while ncat -z 127.0.0.1 "${HTTP_PORT}" >/dev/null 2>&1; do
     if [ "$UNATTENDED" = true ]; then
       echo >&2 "ERROR: Port ${HTTP_PORT} is in use."
       exit 1;
@@ -672,7 +672,7 @@ check_free_ports() {
     HTTP_PORT=${HTTP_PORT:-$ALTERNATIVE_HTTP_PORT}
   done
 
-  while nc -z 127.0.0.1 "${HTTPS_PORT}" >/dev/null 2>&1; do
+  while ncat -z 127.0.0.1 "${HTTPS_PORT}" >/dev/null 2>&1; do
     if [ "$UNATTENDED" = true ]; then
       echo >&2 "ERROR: Port ${HTTPS_PORT} is in use."
       exit 1;
@@ -868,7 +868,7 @@ confirm_success() {
   do
     sleep 3s
     unmsRunning=true
-    nc -z 127.0.0.1 "${HTTPS_PORT}" && break
+    ncat -z 127.0.0.1 "${HTTPS_PORT}" && break
     echo "."
     unmsRunning=false
     n=$((n+1))
