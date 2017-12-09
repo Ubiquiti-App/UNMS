@@ -643,7 +643,7 @@ build_docker_images() {
   cd "${SCRIPT_DIR}"
 
   if [ -f "${DOCKER_COMPOSE_FILENAME}" ]; then
-    if ! /usr/local/bin/docker-compose build; then
+    if ! docker-compose build; then
       echo "Failed to build docker images"
       exit 1
     fi
