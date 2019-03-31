@@ -15,7 +15,8 @@ if [[ " ${args}" =~ ${branchRegex} ]]; then
 fi
 echo "branch=${branch}"
 
-repo="https://raw.githubusercontent.com/Ubiquiti-App/UNMS/${branch}"
+
+repo="https://raw.githubusercontent.com/Denace/UNMS/${branch}"
 
 versionRegex=" --version ([^ ]+)"
 if [[ " ${args}" =~ ${versionRegex} ]]; then
