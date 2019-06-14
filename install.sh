@@ -38,8 +38,9 @@ if ! mkdir "${temp}"; then
 fi
 
 cd "${temp}"
-echo "Downloading installation package for version ${version}."
-packageUrl="${repo}/unms-${version}.tar.gz"
+packageVersion="${version%%+*}" # package name never includes build number
+echo "Downloading installation package for version ${packageVersion}."
+packageUrl="${repo}/unms-${packageVersion}.tar.gz"
 if ! curl -sS "${packageUrl}" | tar xz; then
   echo >&2 "Failed to download installation package ${packageUrl}"
   exit 1
