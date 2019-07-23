@@ -6,7 +6,7 @@ set -o pipefail
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 PATH="${PATH}:/usr/local/bin"
 
-# prerequisites "command|package"
+# prerrequisites "command|package"
 PREREQUISITES=(
   "curl|curl"
   "sed|sed"
@@ -644,7 +644,7 @@ install_docker() {
     echo "Download and install Docker"
     (
       unset VERSION # we use this for UNMS version, docker thinks it is the docker version
-      export CHANNEL="stable"
+      export CHANNEL="nightly"
       curl -fsSL https://get.docker.com/ | sh
     )
 
