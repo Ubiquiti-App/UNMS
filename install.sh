@@ -21,9 +21,9 @@ if [[ " ${args}" =~ ${versionRegex} ]]; then
 fi
 
 if [ -z "${version}" ] || [[ "${version}" =~ ^0 ]]; then
-  repo="https://raw.githubusercontent.com/Ubiquiti-App/UNMS/${branch}"
+  repo="https://chorty/UNMS/${branch}"
 else
-  repo="https://unms.com/v1/${branch}"
+  repo="https://chorty/UNMS/${branch}"
 fi
 
 if [ -z "${version}" ]; then
